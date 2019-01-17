@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>pantheon/paunify</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco-nord.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+    <ul class="sections">
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h1 id="pantheon-paunify">pantheon/paunify</h1>
+<p>CC+Pantheon compatibility library</p>
+<h2 id="paunify-chroot">paunify-chroot</h2>
+<p>Filesystem prefixing</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">import</span> convert, revert <span class="hljs-keyword">from</span> <span class="hljs-built_in">require</span> <span class="hljs-string">"harbor"</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h1 id="make_chroot">make_chroot</h1>
+<p>Creates a chroot function which can take a file to enter the chroot.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-function"><span class="hljs-title">make_chroot</span> = <span class="hljs-params">(path)</span> -&gt;</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Make directory if it doesn’t exist</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">unless</span> fs.isDir path
+    fs.makeDir path</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Create hvfs</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  hvfs = mountTable convert path</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Setup environment</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  env = <span class="hljs-built_in">setmetatable</span> {
+    <span class="hljs-name">fs</span>: hvfs
+  }, {<span class="hljs-name">__index</span>: <span class="hljs-built_in">_G</span>}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>chroot function - takes the file</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  (file=<span class="hljs-string">"/rom/programs/advanced/multishell.lua"</span>) -&gt;
+    fn, err = <span class="hljs-built_in">loadfile</span> file, env
+    <span class="hljs-keyword">unless</span> fn
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, <span class="hljs-string">"paunify-chroot $ could not load file"</span>
+    fn!</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Check that it’s the same env. If it’s not, then no saves will be changed</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> env.fs == hvfs
+      <span class="hljs-keyword">unless</span> revert env.fs, path
+        <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, <span class="hljs-string">"paunify-chroot $ could not revert hvfs"</span>
+    <span class="hljs-keyword">else</span>
+      <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>, <span class="hljs-string">"paunify-chroot $ corrupted root - fs API is not hvfs"</span>
+  <span class="hljs-comment">--</span>
+
+{ :make_chroot }</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
